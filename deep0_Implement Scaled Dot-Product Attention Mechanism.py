@@ -9,7 +9,7 @@ def scaled_dot_product_attention(query, key, value):
     dim_key = key.shape[-1]
 
     # 计算 query 和 key^T 的点积
-    attention_scores = query @ key.transpose(-2, -1) # transpose:转置：把张量的倒数第 2 个维度和最后一个维度交换位置
+    attention_scores = torch.matmul(query, key.transpose(-2, -1)) # transpose:转置：把张量的倒数第 2 个维度和最后一个维度交换位置
 
     # 缩放 attention_scores，除以 dim_key 的平方根
     attention_scores = attention_scores / torch.sqrt(torch.tensor(dim_key, dtype=torch.float32))
@@ -17,4 +17,5 @@ def scaled_dot_product_attention(query, key, value):
     # 对 attention_scores 应用 softmax 函数，得到注意力权重
     attention_weights = F.softmax(attention_scores, dim=-1) # softmax:会对 attention_scores 的每一行（最后一维）做归一化，让每一组得分变成概率
 
-    
+    output = torch.matmul(attention_weights, value) # 将注意力权重和 value 相乘，得到输出
+    return output
